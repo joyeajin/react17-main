@@ -1,37 +1,38 @@
-import React from "react";
-import SearchForm from "./SearchForm";
-import "./index.css";
-const Header = () => {
-  return (
-    <div className="header">
-      <div className="header-left">
-        <button className="menuBtn">
-          <i className="fas fa-bars"></i>
+import React from 'react';
+import './index.css';
+import {useRef,useEffect} from 'react';
+import {useDispatch} from "react-redux";
+import {getVideoList} from '../../../store/video/videoSlice';
+import { useNavigate } from 'react-router-dom';
+
+const SearchForm = () => {
+    const dispatch = useDispatch();
+    const inputRef=useRef();
+    const navigate=useNavigate()
+    const onSearch = (input) => {
+        const url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=30&q=${input}&regionCode=kr&type=video&key=AIzaSyB4Rcz2lIQSLJsb8T06CcwDlof5oPEMJEo`
+        dispatch(getVideoList(url))
+        navigate('/')
+    } 
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const input =inputRef.current.value;
+        input && onSearch(input);
+        inputRef.current.value = '';
+    }
+    return (
+     <form className='search' onSubmit={onSubmit}>
+        <input
+            placeholder='검색'
+            type="text"
+            className='searchInput'
+            ref={inputRef}
+        />
+        <button className='searchBtn'>
+            <img src="/images/search.png" alt="search icon" className='searchIcon' />
         </button>
-        <div className="logo">
-          <img src="/images/logo.png" alt="logo" className="logoImage" />
-          <h1 className="logoTitle">Youtube</h1>
-        </div>
-      </div>
-      <div className="header-center">
-        <SearchForm />
-        <button>
-          <i className="fas fa-microphone"></i>
-        </button>
-      </div>
-      <div className="header-end">
-        <button className="top-util-btn">
-          <i className="fas fa-plus-square"></i>
-        </button>
-        <button className="top-util-btn">
-          <i className="fas fa-th"></i>
-        </button>
-        <button className="top-util-btn">
-          <i className="fas fa-bell"></i>
-        </button>
-      </div>
-    </div>
-  );
+    </form>
+    );
 };
 
-export default Header;
+export default SearchForm;
